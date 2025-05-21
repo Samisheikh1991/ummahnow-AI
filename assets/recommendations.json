@@ -1,0 +1,14 @@
+[
+    {
+      "keywords": ["patience", "difficulty", "hard time"],
+      "response": "Try this lecture on patience by Omar Suleiman: https://youtu.be/xyz123"
+    },
+    {
+      "keywords": ["prayer", "salah", "khushu"],
+      "response": "Check out this talk on khushu in prayer by Yasir Qadhi: https://youtu.be/abc456"
+    },
+    {
+      "keywords": ["anxiety", "stress"],
+      "response": "Watch this short clip by Yasmin Mogahed on anxiety: https://youtu.be/def789"
+    }
+  ]
