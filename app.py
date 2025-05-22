@@ -1,16 +1,14 @@
+import os
 from flask import Flask, request, jsonify
 from sentence_transformers import SentenceTransformer, util
 import json
-import os
 
 app = Flask(__name__)
-model = SentenceTransformer('all-MiniLM-L6-v2')  # Fast + accurate for semantic matching
+model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# Load your recommendation data
 with open('recommendations.json') as f:
     data = json.load(f)
 
-# Create one combined string per item from keywords for embedding
 texts = [" ".join(item["keywords"]) for item in data]
 embeddings = model.encode(texts, convert_to_tensor=True)
 
@@ -28,5 +26,5 @@ def recommend():
     return jsonify(best_item)
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    port = int(os.environ.get("PORT", 5000))  # THIS is the fix!
+    app.run(host='0.0.0.0', port=port)        # Bind to public interface on dynamic port
