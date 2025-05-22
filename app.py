@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from sentence_transformers import SentenceTransformer, util
 import json
+import os
 
 app = Flask(__name__)
 model = SentenceTransformer('all-MiniLM-L6-v2')  # Fast + accurate for semantic matching
@@ -27,4 +28,5 @@ def recommend():
     return jsonify(best_item)
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
