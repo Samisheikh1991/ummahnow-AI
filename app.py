@@ -2,6 +2,8 @@ import os
 from flask import Flask, request, jsonify
 from sentence_transformers import SentenceTransformer, util
 import json
+import os
+
 
 app = Flask(__name__)
 model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -26,5 +28,5 @@ def recommend():
     return jsonify(best_item)
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Use Render's dynamic port or fallback to 5000
-    app.run(host='0.0.0.0', port=port, debug=True)
+    port = int(os.environ.get("PORT", 10000))  # use Render-assigned port
+    app.run(host='0.0.0.0', port=port)
