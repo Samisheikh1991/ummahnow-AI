@@ -2,12 +2,11 @@ import os
 from flask import Flask, request, jsonify
 from sentence_transformers import SentenceTransformer, util
 import json
-import os
-
 
 app = Flask(__name__)
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
+# Load recommendation data
 with open('recommendations.json') as f:
     data = json.load(f)
 
@@ -23,10 +22,8 @@ def recommend():
     user_embedding = model.encode(user_input, convert_to_tensor=True)
     scores = util.pytorch_cos_sim(user_embedding, embeddings)[0]
     best_match_index = scores.argmax().item()
-    best_item = data[best_match_index]
-
-    return jsonify(best_item)
+    return jsonify(data[best_match_index])
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))  # use Render-assigned port
+    port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
