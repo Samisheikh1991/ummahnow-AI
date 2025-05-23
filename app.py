@@ -19,26 +19,31 @@ def get_mosque_near_zip(zip_code):
 
 @app.route('/recommend', methods=['POST'])
 def recommend():
-    print("✅ /recommend endpoint was hit")  # <-- Add this
-    req_data = request.get_json(force=True)
-    print(f"🔎 Incoming data: {req_data}")
-    query = req_data.get("query")
-    zip_code = req_data.get("zip")
+    try:
+        req_data = request.json
+        print("Received data:", req_data)
 
-    if not query or not zip_code:
-        return jsonify({"response": "Missing query or ZIP code"}), 400
+        query = req_data.get("query")
+        zip_code = req_data.get("zip")
 
-    user_embedding = model.encode(query, convert_to_tensor=True)
-    scores = util.pytorch_cos_sim(user_embedding, embeddings)[0]
-    best_idx = scores.argmax().item()
-    match = data[best_idx]
+        if not query or not zip_code:
+            return jsonify({"error": "Missing query or zip"}), 400
 
-    response = match.get("response", "No result.")
-    if "jummah" in query.lower() or "friday" in query.lower():
-        response = get_mosque_near_zip(zip_code)
+        user_embedding = model.encode(query, convert_to_tensor=True)
+        scores = util.pytorch_cos_sim(user_embedding, embeddings)[0]
+        best_idx = scores.argmax().item()
+        match = data[best_idx]
 
-    return jsonify({"response": response})
+        response = match.get("response", "No result.")
+        if "jummah" in query.lower() or "friday" in query.lower():
+            response = get_mosque_near_zip(zip_code)
 
+        print("Responding with:", response)
+        return jsonify({"response": response})
+
+    except Exception as e:
+        print("Error in /recommend:", str(e))
+        return jsonify({"error": "Internal server error"}), 500
 # Don't run this block on Render
 if __name__ == '__main__':
     app.run(debug=True)
