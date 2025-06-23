@@ -1,12 +1,11 @@
 from flask import Flask, request, jsonify
 from sentence_transformers import SentenceTransformer, util
-import json
-import os
+import json, os
 
 app = Flask(__name__)
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# Load static prompts
+# Load recommendations
 with open('recommendations.json') as f:
     data = json.load(f)
 
@@ -14,36 +13,46 @@ texts = [" ".join(item.get("keywords", [])) for item in data]
 embeddings = model.encode(texts, convert_to_tensor=True)
 
 def get_mosque_near_zip(zip_code):
-    # Use a real mosque locator API or placeholder here
+    # Replace this with real logic or API
     return f"Masjid near {zip_code}: ICNF, Jummah at 1:30 PM"
+
+@app.route("/", methods=["GET"])
+def health_check():
+    return "AI backend is running", 200
 
 @app.route('/recommend', methods=['POST'])
 def recommend():
+    print("📩 Received request at /recommend")
     try:
-        req_data = request.json
-        print("Received data:", req_data)
+        req_data = request.json or {}
+        print("📦 Received data:", req_data)
 
-        query = req_data.get("query")
-        zip_code = req_data.get("zip")
+        query = req_data.get("query", "").strip().lower()
+        zip_code = req_data.get("zip", "").strip()
 
-        if not query or not zip_code:
-            return jsonify({"error": "Missing query or zip"}), 400
+        if not query:
+            return jsonify({"error": "Missing query"}), 400
 
-        user_embedding = model.encode(query, convert_to_tensor=True)
-        scores = util.pytorch_cos_sim(user_embedding, embeddings)[0]
-        best_idx = scores.argmax().item()
-        match = data[best_idx]
+        masjid_keywords = ["jummah", "friday", "masjid", "mosque", "prayer near me"]
+        is_masjid_query = any(word in query for word in masjid_keywords)
 
-        response = match.get("response", "No result.")
-        if "jummah" in query.lower() or "friday" in query.lower():
+        if is_masjid_query:
+            if not zip_code:
+                return jsonify({"error": "ZIP code required for masjid-related queries"}), 400
             response = get_mosque_near_zip(zip_code)
+        else:
+            user_embedding = model.encode(query, convert_to_tensor=True)
+            scores = util.pytorch_cos_sim(user_embedding, embeddings)[0]
+            best_idx = scores.argmax().item()
+            match = data[best_idx]
+            response = match.get("response", "No relevant result found.")
 
-        print("Responding with:", response)
+        print("✅ Responding with:", response)
         return jsonify({"response": response})
 
     except Exception as e:
-        print("Error in /recommend:", str(e))
+        print("❌ Error in /recommend:", str(e))
         return jsonify({"error": "Internal server error"}), 500
-# Don't run this block on Render
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
