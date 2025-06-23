@@ -1,19 +1,14 @@
 from flask import Flask, request, jsonify
-from sentence_transformers import SentenceTransformer, util
 import json, os
 
 app = Flask(__name__)
-model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# Load recommendations
+# Load the recommendations JSON from file
 with open('recommendations.json') as f:
     data = json.load(f)
 
-texts = [" ".join(item.get("keywords", [])) for item in data]
-embeddings = model.encode(texts, convert_to_tensor=True)
-
+# Simulated mosque lookup (you can make this smarter later)
 def get_mosque_near_zip(zip_code):
-    # Replace this with real logic or API
     return f"Masjid near {zip_code}: ICNF, Jummah at 1:30 PM"
 
 @app.route("/", methods=["GET"])
@@ -33,7 +28,8 @@ def recommend():
         if not query:
             return jsonify({"error": "Missing query"}), 400
 
-        masjid_keywords = ["jummah", "friday", "masjid", "mosque", "prayer near me"]
+        # Check if it's a masjid-related query
+        masjid_keywords = ["jummah", "friday", "masjid", "mosque"]
         is_masjid_query = any(word in query for word in masjid_keywords)
 
         if is_masjid_query:
@@ -41,11 +37,13 @@ def recommend():
                 return jsonify({"error": "ZIP code required for masjid-related queries"}), 400
             response = get_mosque_near_zip(zip_code)
         else:
-            user_embedding = model.encode(query, convert_to_tensor=True)
-            scores = util.pytorch_cos_sim(user_embedding, embeddings)[0]
-            best_idx = scores.argmax().item()
-            match = data[best_idx]
-            response = match.get("response", "No relevant result found.")
+            # Simple keyword scan through loaded JSON
+            response = "No result."
+            for item in data:
+                keywords = item.get("keywords", [])
+                if any(kw.lower() in query for kw in keywords):
+                    response = item.get("response", "No result.")
+                    break
 
         print("✅ Responding with:", response)
         return jsonify({"response": response})
