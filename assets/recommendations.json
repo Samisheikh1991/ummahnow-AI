@@ -1,72 +1,72 @@
 [
-  {
-    "title": "Patience in Hard Times",
-    "description": "A powerful lecture on patience by Omar Suleiman.",
-    "keywords": ["patience", "difficulty", "hard time"],
-    "response": "Try this lecture on patience by Omar Suleiman: https://youtu.be/xyz123"
-  },
-  {
-    "title": "Prayer",
-    "description": "Learn how to develop khushu in Salah.",
-    "keywords": ["prayer", "khushu", "salah", "focus"],
-    "response": "Check out this talk on khushu in prayer by Yasir Qadhi: https://youtu.be/abc456"
-  },
-  {
-    "title": "Ramadan Events",
-    "description": "Join our special Ramadan programs every weekend...",
-    "keywords": ["ramadan", "iftar", "taraweeh", "fasting", "quran"],
-    "response": "See our Ramadan event schedule at: https://ummahnow.org/ramadan"
-  },
-  {
-    "title": "Friday Khutbah",
-    "description": "Weekly Friday Khutbah Around You ",
-    "keywords": ["jummah", "friday prayer", "khutbah", "masjid"],
-    "response": "Use your location to find the closest Jummah near you."
-  },
-  {
-    "title": "Dealing with Anxiety",
-    "description": "A comforting message on anxiety by Yasmin Mogahed.",
-    "keywords": ["anxiety", "stress", "worry", "mental health"],
-    "response": "Watch this short clip by Yasmin Mogahed on anxiety: https://youtu.be/def789"
-  },
-  {
-    "keywords": ["hajj", "pilgrimage", "makkah", "kaaba"],
-    "response": "Learn how to prepare for Hajj with this guide: https://youtu.be/hajjprep101"
-  },
-  {
-    "keywords": ["funeral", "death", "janazah", "burial"],
-    "response": "Understand Islamic funeral rites: https://youtu.be/funeralsteps"
-  },
-  {
-    "keywords": ["zakat", "sadaqah", "charity", "donation"],
-    "response": "Here's a breakdown of how to calculate and give zakat: https://youtu.be/zakatguide"
-  },
-  {
-    "keywords": ["modesty", "hijab", "identity", "clothing"],
-    "response": "A reflection on modesty and self-worth: https://youtu.be/modestyTalk"
-  },
-  {
-    "keywords": ["parenting", "children", "raising kids", "islamic family"],
-    "response": "Tips for raising strong Muslim children: https://youtu.be/parentingMuslimKids"
-  },
-  {
-    "keywords": ["quran", "tajweed", "recitation", "memorization"],
-    "response": "Practice tajweed with this recitation series: https://youtube.com/quranTajweed"
-  },
-  {
-    "keywords": ["duas", "supplication", "make dua", "allah help"],
-    "response": "Here are powerful duas for tough moments: https://youtu.be/powerfulduas"
-  },
-  {
-    "keywords": ["purpose", "why islam", "life meaning", "creation"],
-    "response": "Watch this talk on the purpose of life in Islam: https://youtu.be/purposeOfLife"
-  },
-  {
-    "keywords": ["youth", "teen", "challenges", "college muslim"],
-    "response": "Advice for Muslim youth in high school and college: https://youtu.be/youthstruggles"
-  },
-  {
-    "keywords": ["sins", "forgiveness", "repentance", "tawbah"],
-    "response": "A talk on Allah’s mercy and how to seek forgiveness: https://youtu.be/repentanceTalk"
-  }
-]
+    {
+      "title": "Patience in Hard Times",
+      "description": "A powerful lecture on patience by Omar Suleiman.",
+      "keywords": ["patience", "sabr", "hard time"],
+      "response": "Try this lecture on patience by Omar Suleiman: https://youtu.be/xyz123"
+    },
+    {
+      "title": "Prayer",
+      "description": "Learn how to develop khushu in Salah.",
+      "keywords": ["prayer", "khushu", "salah", "focus"],
+      "response": "Check out this talk on khushu in prayer by Yasir Qadhi: https://youtu.be/abc456"
+    },
+    {
+      "title": "Ramadan Events",
+      "description": "Join our special Ramadan programs every weekend...",
+      "keywords": ["ramadan", "iftar", "taraweeh", "fasting", "quran"],
+      "response": "See our Ramadan event schedule at: https://ummahnow.org/ramadan"
+    },
+    {
+      "title": "Friday Khutbah",
+      "description": "Weekly Friday Khutbah Around You ",
+      "keywords": ["jummah", "friday prayer", "khutbah", "masjid"],
+      "response": "Use your location to find the closest Jummah near you."
+    },
+    {
+      "title": "Dealing with Anxiety",
+      "description": "A comforting message on anxiety by Yasmin Mogahed.",
+      "keywords": ["anxiety", "stress", "worry", "mental health"],
+      "response": "Watch this short clip by Yasmin Mogahed on anxiety: https://youtu.be/def789"
+    },
+    {
+      "keywords": ["hajj", "pilgrimage", "makkah", "kaaba"],
+      "response": "Learn how to prepare for Hajj with this guide: https://youtu.be/hajjprep101"
+    },
+    {
+      "keywords": ["funeral", "death", "janazah", "burial"],
+      "response": "Understand Islamic funeral rites: https://youtu.be/funeralsteps"
+    },
+    {
+      "keywords": ["zakat", "sadaqah", "charity", "donation"],
+      "response": "Here's a breakdown of how to calculate and give zakat: https://youtu.be/zakatguide"
+    },
+    {
+      "keywords": ["modesty", "hijab", "identity", "clothing"],
+      "response": "A reflection on modesty and self-worth: https://youtu.be/modestyTalk"
+    },
+    {
+      "keywords": ["parenting", "children", "raising kids", "islamic family"],
+      "response": "Tips for raising strong Muslim children: https://youtu.be/parentingMuslimKids"
+    },
+    {
+      "keywords": ["quran", "tajweed", "recitation", "memorization"],
+      "response": "Practice tajweed with this recitation series: https://youtube.com/quranTajweed"
+    },
+    {
+      "keywords": ["duas", "supplication", "make dua", "allah help"],
+      "response": "Here are powerful duas for tough moments: https://youtu.be/powerfulduas"
+    },
+    {
+      "keywords": ["purpose", "why islam", "life meaning", "creation"],
+      "response": "Watch this talk on the purpose of life in Islam: https://youtu.be/purposeOfLife"
+    },
+    {
+      "keywords": ["youth", "teen", "challenges", "college muslim"],
+      "response": "Advice for Muslim youth in high school and college: https://youtu.be/youthstruggles"
+    },
+    {
+      "keywords": ["sins", "forgiveness", "repentance", "tawbah"],
+      "response": "A talk on Allah’s mercy and how to seek forgiveness: https://youtu.be/repentanceTalk"
+    }
+  ]
