@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: ummahnow-ai
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app --timeout 60 --workers 1"
+    autoDeploy: true
