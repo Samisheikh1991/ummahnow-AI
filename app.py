@@ -1,42 +1,29 @@
 from flask import Flask, request, jsonify
-import json, os
+import json, os, torch
 from sentence_transformers import SentenceTransformer, util
-import torch
 
 app = Flask(__name__)
 
-# Load Hadith JSONs and safely add source tag
-def load_and_tag(path, source_name):
-    with open(path) as f:
-        hadith_list = json.load(f)
-        cleaned = []
-        for h in hadith_list:
-            if isinstance(h, dict):
-                h['source'] = source_name
-                cleaned.append(h)
-            elif isinstance(h, str):  # fallback if it's just text
-                cleaned.append({
-                    "english": {"text": h, "narrator": "Unknown"},
-                    "source": source_name
-                })
-        return cleaned
-
-bukhari = load_and_tag('assets/bukhari.json', 'Bukhari')
-muslim = load_and_tag('assets/muslim.json', 'Muslim')
-
-# Load simple recommendations
-with open('assets/recommendations.json') as f:
-    data = json.load(f)
-
-# Combine and embed Hadiths
-combined_hadiths = bukhari + muslim
-hadith_texts = [h.get("english", {}).get("text", "") for h in combined_hadiths]
-
+# Load sentence transformer model
+print("⚙️ Loading model...")
 model = SentenceTransformer('all-MiniLM-L6-v2')
-hadith_embeddings = model.encode(hadith_texts, convert_to_tensor=True)
 
-# Simulated masjid search
-def get_mosque_near_zip(zip_code):
+# Load precomputed Hadith embeddings and texts
+print("🔁 Loading hadith memory...")
+checkpoint = torch.load("assets/hadith_data.pt")
+combined_hadiths = checkpoint["hadiths"]
+hadith_embeddings = checkpoint["embeddings"]
+print(f"✅ Loaded {len(combined_hadiths)} hadiths into memory.")
+
+# Load recommendation fallback JSON (optional usage)
+try:
+    with open('assets/recommendations.json') as f:
+        recommendations_data = json.load(f)
+except:
+    recommendations_data = []
+
+# Dummy masjid recommendation (can be improved later)
+def get_masjid_near_zip(zip_code):
     return f"Masjid near {zip_code}: ICNF, Jummah at 1:30 PM"
 
 @app.route("/", methods=["GET"])
@@ -54,14 +41,13 @@ def recommend():
         if not query:
             return jsonify({"error": "Missing query"}), 400
 
-        # Masjid handling
-        masjid_keywords = ["jummah", "friday", "masjid", "mosque"]
-        if any(word in query for word in masjid_keywords):
+        # Masjid-related queries
+        if any(word in query for word in ["jummah", "friday", "masjid", "mosque"]):
             if not zip_code:
                 return jsonify({"error": "ZIP code required for masjid-related queries"}), 400
-            return jsonify({"response": get_mosque_near_zip(zip_code)})
+            return jsonify({"response": get_masjid_near_zip(zip_code)})
 
-        # Semantic search
+        # Semantic search on Hadiths
         query_embedding = model.encode(query, convert_to_tensor=True)
         similarities = util.pytorch_cos_sim(query_embedding, hadith_embeddings)[0]
         top_scores, top_indices = torch.topk(similarities, 3)
@@ -70,11 +56,11 @@ def recommend():
         for score, idx in zip(top_scores, top_indices):
             if score.item() < 0.15:
                 continue
-            match = combined_hadiths[idx]
+            h = combined_hadiths[idx]
             results.append({
-                "source": match.get("source", ""),
-                "narrator": match.get("english", {}).get("narrator", "Unknown"),
-                "text": match.get("english", {}).get("text", "No text available."),
+                "source": h.get("source", ""),
+                "narrator": h.get("english", {}).get("narrator", "Unknown"),
+                "text": h.get("english", {}).get("text", "No text available."),
                 "score": round(score.item(), 3)
             })
 
@@ -85,7 +71,7 @@ def recommend():
         return jsonify({"matches": results})
 
     except Exception as e:
-        print("❌ Error in /recommend:", str(e))
+        print("❌ Error:", str(e))
         return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == "__main__":
