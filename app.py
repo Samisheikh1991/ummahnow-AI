@@ -6,20 +6,19 @@ import torch
 app = Flask(__name__)
 
 # Load recommendations (for non-Hadith simple keyword queries)
-with open('recommendations.json') as f:
-    data = json.load(f)
-
-# Load Hadith datasets
-with open('bukhari.json') as f:
+with open('assets/bukhari.json') as f:
     bukhari = json.load(f)
     for h in bukhari:
         h['source'] = 'Bukhari'
 
-with open('muslim.json') as f:
+with open('assets/muslim.json') as f:
     muslim = json.load(f)
     for h in muslim:
         h['source'] = 'Muslim'
 
+with open('assets/recommendations.json') as f:
+    data = json.load(f)
+    
 # Combine all hadiths and embed their English text
 combined_hadiths = bukhari + muslim
 hadith_texts = [h.get("english", {}).get("text", "") for h in combined_hadiths]
