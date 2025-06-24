@@ -5,28 +5,37 @@ import torch
 
 app = Flask(__name__)
 
-# Load recommendations (for non-Hadith simple keyword queries)
-with open('assets/bukhari.json') as f:
-    bukhari = json.load(f)
-    for h in bukhari:
-        h['source'] = 'Bukhari'
+# Load Hadith JSONs and safely add source tag
+def load_and_tag(path, source_name):
+    with open(path) as f:
+        hadith_list = json.load(f)
+        cleaned = []
+        for h in hadith_list:
+            if isinstance(h, dict):
+                h['source'] = source_name
+                cleaned.append(h)
+            elif isinstance(h, str):  # fallback if it's just text
+                cleaned.append({
+                    "english": {"text": h, "narrator": "Unknown"},
+                    "source": source_name
+                })
+        return cleaned
 
-with open('assets/muslim.json') as f:
-    muslim = json.load(f)
-    for h in muslim:
-        h['source'] = 'Muslim'
+bukhari = load_and_tag('assets/bukhari.json', 'Bukhari')
+muslim = load_and_tag('assets/muslim.json', 'Muslim')
 
+# Load simple recommendations
 with open('assets/recommendations.json') as f:
     data = json.load(f)
-    
-# Combine all hadiths and embed their English text
+
+# Combine and embed Hadiths
 combined_hadiths = bukhari + muslim
 hadith_texts = [h.get("english", {}).get("text", "") for h in combined_hadiths]
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 hadith_embeddings = model.encode(hadith_texts, convert_to_tensor=True)
 
-# Simulated ZIP masjid finder
+# Simulated masjid search
 def get_mosque_near_zip(zip_code):
     return f"Masjid near {zip_code}: ICNF, Jummah at 1:30 PM"
 
@@ -45,14 +54,14 @@ def recommend():
         if not query:
             return jsonify({"error": "Missing query"}), 400
 
-        # Check for masjid-related keywords
+        # Masjid handling
         masjid_keywords = ["jummah", "friday", "masjid", "mosque"]
         if any(word in query for word in masjid_keywords):
             if not zip_code:
                 return jsonify({"error": "ZIP code required for masjid-related queries"}), 400
             return jsonify({"response": get_mosque_near_zip(zip_code)})
 
-        # Perform semantic search on hadiths
+        # Semantic search
         query_embedding = model.encode(query, convert_to_tensor=True)
         similarities = util.pytorch_cos_sim(query_embedding, hadith_embeddings)[0]
         top_scores, top_indices = torch.topk(similarities, 3)
