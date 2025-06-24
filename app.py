@@ -59,7 +59,7 @@ def recommend():
 
         results = []
         for score, idx in zip(top_scores, top_indices):
-            if score.item() < 0.25:
+            if score.item() < 0.15:
                 continue
             match = combined_hadiths[idx]
             results.append({
