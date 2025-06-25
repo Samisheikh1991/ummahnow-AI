@@ -4,25 +4,24 @@ from sentence_transformers import SentenceTransformer, util
 
 app = Flask(__name__)
 
-# Load sentence transformer model
+# Load model
 print("⚙️ Loading model...")
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# Load precomputed Hadith embeddings and texts
+# Load precomputed hadith data
 print("🔁 Loading hadith memory...")
-checkpoint = torch.load("assets/hadith_data.pt")
+checkpoint = torch.load("assets/hadith_data.pt", map_location=torch.device('cpu'))
 combined_hadiths = checkpoint["hadiths"]
 hadith_embeddings = checkpoint["embeddings"]
 print(f"✅ Loaded {len(combined_hadiths)} hadiths into memory.")
 
-# Load recommendation fallback JSON (optional usage)
+# Optional: load recommendations (for non-Hadith fallback)
 try:
     with open('assets/recommendations.json') as f:
         recommendations_data = json.load(f)
 except:
     recommendations_data = []
 
-# Dummy masjid recommendation (can be improved later)
 def get_masjid_near_zip(zip_code):
     return f"Masjid near {zip_code}: ICNF, Jummah at 1:30 PM"
 
@@ -41,13 +40,13 @@ def recommend():
         if not query:
             return jsonify({"error": "Missing query"}), 400
 
-        # Masjid-related queries
+        # Masjid handling
         if any(word in query for word in ["jummah", "friday", "masjid", "mosque"]):
             if not zip_code:
                 return jsonify({"error": "ZIP code required for masjid-related queries"}), 400
             return jsonify({"response": get_masjid_near_zip(zip_code)})
 
-        # Semantic search on Hadiths
+        # Semantic Hadith search
         query_embedding = model.encode(query, convert_to_tensor=True)
         similarities = util.pytorch_cos_sim(query_embedding, hadith_embeddings)[0]
         top_scores, top_indices = torch.topk(similarities, 3)
@@ -59,8 +58,8 @@ def recommend():
             h = combined_hadiths[idx]
             results.append({
                 "source": h.get("source", ""),
-                "narrator": h.get("english", {}).get("narrator", "Unknown"),
-                "text": h.get("english", {}).get("text", "No text available."),
+                "narrator": h.get("narrator", "Unknown"),
+                "text": h.get("text", "No text available."),
                 "score": round(score.item(), 3)
             })
 
@@ -71,7 +70,7 @@ def recommend():
         return jsonify({"matches": results})
 
     except Exception as e:
-        print("❌ Error:", str(e))
+        print("❌ Error in /recommend:", str(e))
         return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == "__main__":
